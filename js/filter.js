@@ -11,21 +11,6 @@ function nofilter() {
     cxt.putImageData(imgdata, 0, 0)
 }
 
-//grayscale 
-function grayscale() {
-    data = imgdata.data
-    for (let i = 0; i < data.length; i += 4) {
-        let avg = (data[i] * 1 / 3 + data[i + 1] * 1 / 3 + data[i + 2] * 1 / 3)
-
-        data[i] = avg;
-        data[i + 1] = avg;
-        data[i + 2] = avg;
-    }
-
-    cxt.putImageData(imgdata, 0, 0)
-}
-
-
 //black and white
 function blackWhite() {
     data = imgdata.data
@@ -42,10 +27,68 @@ function blackWhite() {
     cxt.putImageData(imgdata, 0, 0)
 }
 
-function warm () {
-    data = imgdata.data;
-    for(let i = 0; i < data.length; i+=4){
+//filterfunctions
+function flterColors(r, g, b) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+}
 
+let filters = new Array();
+filters.push(new flterColors(0xFF, 0xFF, 0xFF));
+filters.push(new flterColors(0xEB, 0xB1, 0x13));
+filters.push(new flterColors(0x00, 0xB5, 0xFF));
+
+//grayscale 
+function grayscale() {
+    let data = imgdata.data;
+    for(let i = 0; i < data.length; i += 4){
+        
+        let luma = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+        
+        let rIntensity = (filters[0].r * 50 + 255 * (100 - 50)) / 25500;
+        let gIntensity = (filters[0].g * 50 + 255 * (100 - 50)) / 25500;
+        let bIntensity = (filters[0].b * 50 + 255 * (100 - 50)) / 25500;
+
+        data[i] = Math.round(rIntensity * luma);
+        data[i+1] = Math.round(gIntensity * luma);
+        data[i+2] = Math.round(bIntensity * luma);
     }
-    cxt.putImageData(imgData, 0, 0);
+    cxt.putImageData(imgdata, 0, 0);
+}
+
+function warm() {
+    let data = imgdata.data;
+    for(let i = 0; i < data.length; i += 4){
+        
+        let luma = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+        
+        let rIntensity = (filters[1].r * 50 + 255 * (100 - 50)) / 25500;
+        let gIntensity = (filters[1].g * 50 + 255 * (100 - 50)) / 25500;
+        let bIntensity = (filters[1].b * 50 + 255 * (100 - 50)) / 25500;
+
+        data[i] = Math.round(rIntensity * luma);
+        data[i+1] = Math.round(gIntensity * luma);
+        data[i+2] = Math.round(bIntensity * luma);
+    }
+    
+    cxt.putImageData(imgdata, 0, 0);
+}
+
+function cool(){
+    let data = imgdata.data;
+    for(let i = 0; i < data.length; i += 4){
+        
+        let luma = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+        
+        let rIntensity = (filters[2].r * 50 + 255 * (100 - 50)) / 25500;
+        let gIntensity = (filters[2].g * 50 + 255 * (100 - 50)) / 25500;
+        let bIntensity = (filters[2].b * 50 + 255 * (100 - 50)) / 25500;
+
+        data[i] = Math.round(rIntensity * luma);
+        data[i+1] = Math.round(gIntensity * luma);
+        data[i+2] = Math.round(bIntensity * luma);
+    }
+    
+    cxt.putImageData(imgdata, 0, 0);
 }

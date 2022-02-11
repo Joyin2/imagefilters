@@ -55,6 +55,15 @@ BUTTONS.forEach(elem => {
             case "blackwhite":
                 blackWhite();
                 break;
+            case "warm":
+                warm();
+                break;
+            case "cool":
+                cool();
+                break;
+            case "vignette":
+                vignette();
+                break;
             default:
                 break;
         }
