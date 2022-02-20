@@ -61,8 +61,14 @@ BUTTONS.forEach(elem => {
             case "cool":
                 cool();
                 break;
+            case "sharpen":
+                sharpen(CVS.width, CVS.height, 0.5);
+                break;
             case "vignette":
                 vignette();
+                break;
+            case "soft":
+                soften();
                 break;
             default:
                 break;

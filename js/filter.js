@@ -1,5 +1,6 @@
 //removing all filters
 function nofilter() {
+    cxt. clearRect(0, 0, CVS.width, CVS.height);
     cxt.drawImage(image, 0, 0)
     imgdata = cxt.getImageData(0, 0, image.width, image.height)
     data = imgdata.data;
@@ -26,6 +27,91 @@ function blackWhite() {
 
     cxt.putImageData(imgdata, 0, 0)
 }
+
+    //sharpen
+function sharpen(w, h, mix) {
+    var x, sx, sy, r, g, b, a, dstOff, srcOff, wt, cx, cy, scy, scx,
+        weights = [0, -1, 0, -1, 5, -1, 0, -1, 0],
+        katet = Math.round(Math.sqrt(weights.length)),
+        half = (katet * 0.5) | 0,
+        dstData = cxt.createImageData(w, h),
+        dstBuff = dstData.data,
+        srcBuff = cxt.getImageData(0, 0, w, h).data,
+        y = h;
+
+    while (y--) {
+        x = w;
+        while (x--) {
+            sy = y;
+            sx = x;
+            dstOff = (y * w + x) * 4;
+            r = 0;
+            g = 0;
+            b = 0;
+            a = 0;
+
+            for (cy = 0; cy < katet; cy++) {
+                for (cx = 0; cx < katet; cx++) {
+                    scy = sy + cy - half;
+                    scx = sx + cx - half;
+
+                    if (scy >= 0 && scy < h && scx >= 0 && scx < w) {
+                        srcOff = (scy * w + scx) * 4;
+                        wt = weights[cy * katet + cx];
+
+                        r += srcBuff[srcOff] * wt;
+                        g += srcBuff[srcOff + 1] * wt;
+                        b += srcBuff[srcOff + 2] * wt;
+                        a += srcBuff[srcOff + 3] * wt;
+                    }
+                }
+            }
+
+            dstBuff[dstOff] = r * mix + srcBuff[dstOff] * (1 - mix);
+            dstBuff[dstOff + 1] = g * mix + srcBuff[dstOff + 1] * (1 - mix);
+            dstBuff[dstOff + 2] = b * mix + srcBuff[dstOff + 2] * (1 - mix);
+            dstBuff[dstOff + 3] = srcBuff[dstOff + 3];
+        }
+    }
+    cxt.putImageData(dstData, 0, 0);
+}
+
+function soften() {
+    let offset = 0.2;
+    cxt.globalAlpha = 0.3;
+
+    for (let i=1; i<=8; i+=1) {
+        cxt.drawImage(image, offset, 0, CVS.width - offset, CVS.height, 0, 0, CVS.width-offset, CVS.height);
+        cxt.drawImage(image, 0, offset, CVS.width, CVS.height - offset, 0, 0, CVS.width, CVS.height-offset);
+    }
+
+    cxt.putImageData(imgdata, 0, 0);
+}
+
+function vignette(){
+    var gradient,
+        outerRadius = Math.sqrt( Math.pow( CVS.width/2, 2 ) + Math.pow( CVS.height/2, 2 ) );
+
+    // Adds outer darkened blur effect
+    cxt.globalCompositeOperation = 'source-over';
+    gradient = cxt.createRadialGradient( CVS.width/2, CVS.height/2, 0, CVS.width/2, CVS.height/2, outerRadius );
+    gradient.addColorStop( 0, 'rgba(0, 0, 0, 0)' );
+    gradient.addColorStop( 0.8, 'rgba(0, 0, 0, 0)' );
+    gradient.addColorStop( 1, 'rgba(0, 0, 0, 0.6)' );
+    cxt.fillStyle = gradient;
+    cxt.fillRect( 0, 0, CVS.width, CVS.height );
+
+    // Adds central lighten effect
+    cxt.globalCompositeOperation = 'lighter';
+    gradient = cxt.createRadialGradient( CVS.width/2, CVS.height/2, 0, CVS.width/2, CVS.height/2, outerRadius );
+    gradient.addColorStop( 0, 'rgba(255, 255, 255, 0.1)' );
+    gradient.addColorStop( 0.65, 'rgba(255, 255, 255, 0)' );
+    gradient.addColorStop( 1, 'rgba(0, 0, 0, 0)' );
+    cxt.fillStyle = gradient;
+    cxt.fillRect( 0, 0, CVS.width, CVS.height );
+
+}
+
 
 //filterfunctions
 function flterColors(r, g, b) {
