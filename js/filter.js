@@ -76,22 +76,29 @@ function sharpen(w, h, mix) {
     cxt.putImageData(dstData, 0, 0);
 }
 
-// function soften() {
-//     let offset = 0.2;
-//     cxt.globalAlpha = 0.3;
-
-//     for (let i=1; i<=8; i+=1) {
-//         cxt.drawImage(image, offset, 0, CVS.width - offset, CVS.height, 0, 0, CVS.width-offset, CVS.height);
-//         cxt.drawImage(image, 0, offset, CVS.width, CVS.height - offset, 0, 0, CVS.width, CVS.height-offset);
-//     }
-
-//     cxt.putImageData(imgdata, 0, 0);
-// }
+function soften() {
+    cxt.globalAlpha = 0.5; // Higher alpha made it more smooth
+    // Add blur layers by strength to x and y
+    // 2 made it a bit faster without noticeable quality loss
+    let strength = 1.25;
+    for (let y = -strength; y <= strength; y += 2) {
+        for (let x = -strength; x <= strength; x += 2) {
+            // Apply layers
+            cxt.drawImage(image, x, y);
+            // Add an extra layer, prevents it from rendering lines
+            // on top of the images (does makes it slower though)
+            if (x>=0 && y>=0) {
+                cxt.drawImage(image, -(x-1), -(y-1));
+            }
+        }
+    }
+    cxt.globalAlpha = 1.0;
+}
 
 
 function faded(){
     cxt.globalCompositeOperation = 'source-over';
-    cxt.fillStyle = "rgba(255, 255, 255, 0.4)";
+    cxt.fillStyle = "rgba(255, 255, 255, 0.17)";
     cxt.beginPath();
     cxt.fillRect(0, 0, CVS.width, CVS.height);
     cxt.fill();
