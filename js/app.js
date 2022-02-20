@@ -67,8 +67,8 @@ BUTTONS.forEach(elem => {
             case "vignette":
                 vignette();
                 break;
-            case "soft":
-                soften();
+            case "faded":
+                faded();
                 break;
             default:
                 break;

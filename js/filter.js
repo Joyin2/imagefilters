@@ -76,16 +76,26 @@ function sharpen(w, h, mix) {
     cxt.putImageData(dstData, 0, 0);
 }
 
-function soften() {
-    let offset = 0.2;
-    cxt.globalAlpha = 0.3;
+// function soften() {
+//     let offset = 0.2;
+//     cxt.globalAlpha = 0.3;
 
-    for (let i=1; i<=8; i+=1) {
-        cxt.drawImage(image, offset, 0, CVS.width - offset, CVS.height, 0, 0, CVS.width-offset, CVS.height);
-        cxt.drawImage(image, 0, offset, CVS.width, CVS.height - offset, 0, 0, CVS.width, CVS.height-offset);
-    }
+//     for (let i=1; i<=8; i+=1) {
+//         cxt.drawImage(image, offset, 0, CVS.width - offset, CVS.height, 0, 0, CVS.width-offset, CVS.height);
+//         cxt.drawImage(image, 0, offset, CVS.width, CVS.height - offset, 0, 0, CVS.width, CVS.height-offset);
+//     }
 
-    cxt.putImageData(imgdata, 0, 0);
+//     cxt.putImageData(imgdata, 0, 0);
+// }
+
+
+function faded(){
+    cxt.globalCompositeOperation = 'source-over';
+    cxt.fillStyle = "rgba(255, 255, 255, 0.4)";
+    cxt.beginPath();
+    cxt.fillRect(0, 0, CVS.width, CVS.height);
+    cxt.fill();
+    cxt.globalCompositeOperation = 'source-over';
 }
 
 function vignette(){
